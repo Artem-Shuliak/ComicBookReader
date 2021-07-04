@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2EB15E8746CC7F7B331681E1 /* Pods_comicBookReader2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FFFB4FB3FF52FA6FFBFCE8C /* Pods_comicBookReader2.framework */; };
+		372562A12692369D000A08EF /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 372562A02692369D000A08EF /* SwiftPackageProductDependency */; };
 		E6341FBE268EE05400F588A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6341FBD268EE05400F588A2 /* AppDelegate.swift */; };
 		E6341FC0268EE05400F588A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6341FBF268EE05400F588A2 /* SceneDelegate.swift */; };
 		E6341FC2268EE05400F588A2 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6341FC1268EE05400F588A2 /* MainViewController.swift */; };
@@ -19,6 +21,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3FFFB4FB3FF52FA6FFBFCE8C /* Pods_comicBookReader2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_comicBookReader2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		75AC36B0994C51FF29E213D1 /* Pods-comicBookReader2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-comicBookReader2.release.xcconfig"; path = "Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2.release.xcconfig"; sourceTree = "<group>"; };
+		BC01A4A615022C5C635DA637 /* Pods-comicBookReader2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-comicBookReader2.debug.xcconfig"; path = "Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2.debug.xcconfig"; sourceTree = "<group>"; };
 		E6341FBA268EE05400F588A2 /* comicBookReader2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = comicBookReader2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6341FBD268EE05400F588A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E6341FBF268EE05400F588A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -37,17 +42,29 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				372562A12692369D000A08EF /* BuildFile in Frameworks */,
+				2EB15E8746CC7F7B331681E1 /* Pods_comicBookReader2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3AD30FFFDA41E458CC388C96 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3FFFB4FB3FF52FA6FFBFCE8C /* Pods_comicBookReader2.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E6341FB1268EE05400F588A2 = {
 			isa = PBXGroup;
 			children = (
 				E6341FBC268EE05400F588A2 /* comicBookReader2 */,
 				E6341FBB268EE05400F588A2 /* Products */,
+				F520941A2AB4C03B29B370B9 /* Pods */,
+				3AD30FFFDA41E458CC388C96 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,6 +125,16 @@
 			path = DataProvider;
 			sourceTree = "<group>";
 		};
+		F520941A2AB4C03B29B370B9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BC01A4A615022C5C635DA637 /* Pods-comicBookReader2.debug.xcconfig */,
+				75AC36B0994C51FF29E213D1 /* Pods-comicBookReader2.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -115,15 +142,20 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E6341FCE268EE05400F588A2 /* Build configuration list for PBXNativeTarget "comicBookReader2" */;
 			buildPhases = (
+				7413645F4B3F7F58B52A04B7 /* [CP] Check Pods Manifest.lock */,
 				E6341FB6268EE05400F588A2 /* Sources */,
 				E6341FB7268EE05400F588A2 /* Frameworks */,
 				E6341FB8268EE05400F588A2 /* Resources */,
+				B61DA1064E8674F46820F72B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = comicBookReader2;
+			packageProductDependencies = (
+				372562A02692369D000A08EF /* SwiftPackageProductDependency */,
+			);
 			productName = comicBookReader2;
 			productReference = E6341FBA268EE05400F588A2 /* comicBookReader2.app */;
 			productType = "com.apple.product-type.application";
@@ -151,6 +183,9 @@
 				Base,
 			);
 			mainGroup = E6341FB1268EE05400F588A2;
+			packageReferences = (
+				3725629F2692369D000A08EF /* RemoteSwiftPackageReference */,
+			);
 			productRefGroup = E6341FBB268EE05400F588A2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -171,6 +206,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7413645F4B3F7F58B52A04B7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-comicBookReader2-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B61DA1064E8674F46820F72B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E6341FB6268EE05400F588A2 /* Sources */ = {
@@ -319,6 +396,7 @@
 		};
 		E6341FCF268EE05400F588A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC01A4A615022C5C635DA637 /* Pods-comicBookReader2.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -337,6 +415,7 @@
 		};
 		E6341FD0268EE05400F588A2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 75AC36B0994C51FF29E213D1 /* Pods-comicBookReader2.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -375,6 +454,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3725629F2692369D000A08EF /* RemoteSwiftPackageReference */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/Zip.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		372562A02692369D000A08EF /* SwiftPackageProductDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3725629F2692369D000A08EF /* RemoteSwiftPackageReference */;
+			productName = Zip;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E6341FB2268EE05400F588A2 /* Project object */;
 }

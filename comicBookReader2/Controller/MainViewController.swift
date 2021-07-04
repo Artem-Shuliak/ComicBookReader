@@ -18,17 +18,22 @@ class MainViewController: UIPageViewController, UIPageViewControllerDataSource {
         setupViewControllers()
         setupPageViewController()
         setupNavBar()
-        
     }
     
     // MARK: - Setup Methods
     
     func setupViewControllers() {
-        comicBookViewControllers = comicBookDocument.comicBookInfo?.pages.compactMap { page in
-            guard let image = comicBookDocument.imageAtIndex(index: page.imageNumber) else { return nil }
+//        comicBookViewControllers = comicBookDocument.comicBookInfo?.pages.compactMap { page in
+//            guard let image = comicBookDocument.imageAtIndex(index: page.imageNumber) else { return nil }
+//            let pageViewController = createPage(image: image)
+//            return pageViewController
+//        }
+        
+        comicBookViewControllers = comicBookDocument.getImages()?.compactMap { image in
             let pageViewController = createPage(image: image)
             return pageViewController
         }
+
     }
     
     func setupPageViewController() {

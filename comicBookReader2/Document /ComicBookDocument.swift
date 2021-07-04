@@ -10,10 +10,11 @@ import UIKit
 class ComicBookDocument {
     
     // model for the data of a book extracted by dataProvider
+    let provider = ComicBookDataProvider()
     var comicBookInfo: ComicBookDataModel?
     
     init() {
-        comicBookInfo = getData()
+//        comicBookInfo = getData()
     }
     
     var numberOfPages: Int? {
@@ -32,21 +33,31 @@ class ComicBookDocument {
     func imageAtIndex(index: Int) -> UIImage? {
         return UIImage(named: "X-Men - Golgotha-\(index)")
     }
-    
+
 }
 
-// MARK: - Protocol Methods to get Data from Data Provider
-extension ComicBookDocument: DataProviderProtocol {
 
-    func listOfFiles() {
-        //
+extension ComicBookDocument {
+    
+    // Converts all URL of pages into Images
+    func getImages() -> [UIImage]? {
+        
+        guard let listOfFiles = provider.listOfFiles() else { return nil}
+        
+        let sortedFiles = listOfFiles.sorted {
+            $0.relativeString < $1.relativeString
+        }
+        
+       return sortedFiles.compactMap { URL -> UIImage? in
+            do {
+                let imageData = try Data(contentsOf: URL)
+                let image = UIImage(data: imageData)
+                return image
+            } catch {
+                print("unable to decode image from url")
+                return nil
+            }
+        }
     }
-
-    func getData() -> ComicBookDataModel {
-        //
-        let ExtractedDataModel = ComicBookDataModel(series: "X-Men: Golgotha", summary: "The X-Men travel to Antarctica to respond to an S.O.S. from a colony of mutants...and what they find is far more shocking than they expected! Will the X-Men share the colony's gruesome fate?", publisher: "Marvel", Genre: "Superhero", pageCount: 114, year: 2014, month: 12, day: 01, pages: [Page(imageNumber: 0), Page(imageNumber: 1), Page(imageNumber: 2)])
-        return ExtractedDataModel
-    }
-
 
 }

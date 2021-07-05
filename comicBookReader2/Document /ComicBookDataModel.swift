@@ -7,25 +7,22 @@
 
 import Foundation
 
-struct ComicBookDataModel {
-    let series: String
-    let summary: String
-    let publisher: String
-    let Genre: String
-    let pageCount: Int
-    let year: Int
-    let month: Int
-    let day: Int
-    var pages: [Page]
-}
-
-struct Page  {
-    let imageNumber: Int
+struct ComicBookDataModel: Decodable {
+    let series: String?
+    let summary: String?
+    let publisher: String?
+    let Genre: String?
+    let pageCount: Int?
+    let year: Int?
+    let month: Int?
+    let day: Int?
 }
 
 extension ComicBookDataModel {
     
     var date: String? {
+        
+        guard let day = day, let month = month, let year = year else { return nil }
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -39,4 +36,18 @@ extension ComicBookDataModel {
         
         return dateFormatterPrint.string(from: someDateTime)
     }
+    
+//    func getValues() -> [String: Any] {
+//        let dict: [String: Any] = [
+//            "series": series,
+//            "summary": summary,
+//            "publisher": publisher,
+//            "Genre": Genre,
+//            "pageCount": pageCount,
+//            "year": year,
+//            "month": month,
+//            "day": day,
+//        ]
+//
+//    }
 }

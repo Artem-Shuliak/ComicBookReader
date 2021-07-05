@@ -2,17 +2,25 @@ PODS:
   - UnrarKit (2.9):
     - UnrarKit/unrar-lib (= 2.9)
   - UnrarKit/unrar-lib (2.9)
+  - XMLParsing (0.0.2)
+  - ZIPFoundation (0.9.12)
 
 DEPENDENCIES:
   - UnrarKit
+  - XMLParsing
+  - ZIPFoundation
 
 SPEC REPOS:
   trunk:
     - UnrarKit
+    - XMLParsing
+    - ZIPFoundation
 
 SPEC CHECKSUMS:
   UnrarKit: 99e3f0222a98a212188e1a6975dcf5aa798d26dd
+  XMLParsing: b6cc40a1de8e321a72b7f0d89080473f9d53cff8
+  ZIPFoundation: e27423c004a5a1410c15933407747374e7c6cb6e
 
-PODFILE CHECKSUM: 7aad7ef503b3bf537a762c5097c3dda3fb7a0167
+PODFILE CHECKSUM: 2d949ee0b16b58f0cc9a1f203398c14817f6e94a
 
 COCOAPODS: 1.10.1

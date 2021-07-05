@@ -8,8 +8,8 @@
 import Foundation
 
 protocol DataProviderProtocol {
-    func listOfFiles() -> [URL]?
-    func getData() -> ComicBookDataModel
+    func listOfFilePaths() -> [String]?
+    func extractDataAtPath(filePath: String, completion: (Data?) -> Void)
 }
 
 

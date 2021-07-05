@@ -5,9 +5,9 @@
 //  Created by Artem Chouliak on 7/2/21.
 //
 
-import Foundation
-import Zip
+import UIKit
 import UnrarKit
+import ZIPFoundation
 
 class ComicBookDataProvider {
     
@@ -17,37 +17,56 @@ class ComicBookDataProvider {
     }
     
     // archive reference in app document storage location
-    private var archive: URL? {
-      return getDocumentDirectory?.appendingPathComponent("The Amazing Spider-Man - Amazing Grace (2016) (Digital) (F) (Zone-Empire).cbr")
+    private var archiveFile: URL? {
+        return getDocumentDirectory?.appendingPathComponent("The Amazing Spider-Man - Amazing Grace (2016) (Digital) (F) (Zone-Empire).cbr")
     }
     
+    // Archive Managers
+    private var cbzArchiveManager: Archive?
+    private var cbrArchiveManager: URKArchive?
+    
     init() {
-        decompressArchive()
-    }
+        guard let archiveFile = archiveFile else { return }
         
+        cbzArchiveManager = Archive(url: archiveFile, accessMode: .read)
+        cbrArchiveManager = try? URKArchive(url: archiveFile)
+    }
+    
 }
 
 extension ComicBookDataProvider: DataProviderProtocol {
     
-    // Get URL's of all Files
-    func listOfFiles() -> [URL]? {
-        guard let documentURL = archive?.deletingPathExtension() else { return nil }
-
-        do {
-            let fileURLs = try FileManager.default.contentsOfDirectory(at: documentURL, includingPropertiesForKeys: nil)
-            return fileURLs
-            
-        } catch {
-            print("Error while enumerating files \(documentURL.path): \(error.localizedDescription)")
+    func listOfFilePaths() -> [String]? {
+        let fileExtension = archiveFile?.pathExtension.lowercased()
+        
+        switch fileExtension {
+        case "cbz":
+           return listofCbzFiles()
+        case "cbr":
+           return listofCbrFiles()
+        default:
+            print("unsupported archive extension")
             return nil
         }
-
     }
     
-    func getData() -> ComicBookDataModel {
-        return ComicBookDataModel(series: "", summary: "", publisher: "", Genre: "", pageCount: 0, year: 0, month: 0, day: 0, pages: [])
-    }
     
+    func extractDataAtPath(filePath: String, completion: (Data?) -> Void) {
+        let fileExtension = archiveFile?.pathExtension.lowercased()
+        
+        switch fileExtension {
+        case "cbz":
+            extractCbzFile(filePath: filePath) { data in
+                completion(data)
+            }
+        case "cbr":
+            let data = extractCbrFile(filePath: filePath)
+            completion(data)
+        default:
+            print("unable to extract data - unsupported archive extension")
+            completion(nil)
+        }
+    }
     
 }
 
@@ -57,44 +76,45 @@ extension ComicBookDataProvider: DataProviderProtocol {
 
 extension ComicBookDataProvider {
     
-    // Decompresses the Archive
-    func decompressArchive() {
-    
-        guard let getDocumentsDirectory = getDocumentDirectory, let file = archive else { return }
-        let fileExtension = archive?.pathExtension.lowercased()
-        
-        switch fileExtension {
-        case "cbz":
-            decompressZip(file: file, destination: getDocumentsDirectory)
-        default:
-            decompressRar(file: file, destination: getDocumentsDirectory)
-        }
-        
+    func listofCbzFiles() -> [String]? {
+        guard let archiveManager = cbzArchiveManager else { return nil }
+        return archiveManager.map { $0.path }
     }
     
-    // Decompress Zip Format ("cbz")
-    func decompressZip(file: URL, destination: URL) {
-        do {
-            try Zip.unzipFile(file, destination: destination, overwrite: true, password: nil)
-        } catch {
-            print("unable to decompress archive")
+    func extractCbzFile(filePath: String, completion: (Data?) -> Void) {
+        guard let archiveManager = cbzArchiveManager else {
+            completion(nil)
+            print("unable to instantiate archiveManager")
+            return
         }
-
+        
+        guard let file = archiveManager[filePath] else {
+            completion(nil)
+            print("unable to locate file")
+            return
+        }
+        
+        do {
+            // extracting image from the path and storing it in memory as Data
+            let _ = try archiveManager.extract(file, bufferSize: .max, skipCRC32: false, progress: nil) { Data in
+                print(Data)
+                completion(Data)
+            }
+        } catch {
+            print("unable to extract file")
+            completion(nil)
+        }
     }
     
-    // Decompress Rar Format ("cbr")
-    func decompressRar(file: URL, destination: URL) {
-        
-        let destinationFolder = file.deletingPathExtension()
-        var archive : URKArchive?
-        do {
-            archive = try URKArchive(path: file.path)
-            try archive?.extractFiles(to: destinationFolder.path, overwrite: true)
-            print(destination)
-        } catch {
-            print("unable to decompress archive")
-        }
-
+    
+    func listofCbrFiles() -> [String]? {
+        guard let manager = cbrArchiveManager else { return nil }
+        return try? manager.listFilenames()
+    }
+    
+    func extractCbrFile(filePath: String) -> Data? {
+        guard let manager = cbrArchiveManager else { return nil }
+        return try? manager.extractData(fromFile: filePath)
     }
     
 }

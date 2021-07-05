@@ -14,11 +14,9 @@ class ComicBookDocument {
     var comicBookInfo: ComicBookDataModel?
     
     init() {
-//        comicBookInfo = getData()
-    }
-    
-    var numberOfPages: Int? {
-        return comicBookInfo?.pageCount
+        decodeXMLInfo { model in
+            comicBookInfo = model
+        }
     }
     
     var title: String? {
@@ -29,35 +27,55 @@ class ComicBookDocument {
         return comicBookInfo?.date
     }
     
-    // extracts an imag for index of a page
-    func imageAtIndex(index: Int) -> UIImage? {
-        return UIImage(named: "X-Men - Golgotha-\(index)")
-    }
-
-}
-
-
-extension ComicBookDocument {
     
-    // Converts all URL of pages into Images
-    func getImages() -> [UIImage]? {
-        
-        guard let listOfFiles = provider.listOfFiles() else { return nil}
-        
-        let sortedFiles = listOfFiles.sorted {
-            $0.relativeString < $1.relativeString
+    var numberOfPages: Int {
+        let paths = provider.listOfFilePaths()
+        let filteredPaths = paths?.filter { $0.contains(".jpg")}
+        return filteredPaths?.count ?? 0
+    }
+    
+    var filteredPages: [String]? {
+        let pages = provider.listOfFilePaths()
+        let filteredPaths = pages?.filter { $0.contains(".jpg")}
+        return filteredPaths
+    }
+    
+    // extracts an imag for index of a page
+    func imageAtPage(index: Int, completion: (UIImage?) -> Void) {
+        guard let page = filteredPages?[index] else {
+            completion(nil)
+            print("unable to get page")
+            return
         }
+            
+        provider.extractDataAtPath(filePath: page) { data in
+            guard let data = data else {
+                print("unable to get data")
+                completion(nil)
+                return
+            }
+            
+            guard let image = UIImage(data: data) else {
+                print("unable to create Image from data")
+                return
+            }
         
-       return sortedFiles.compactMap { URL -> UIImage? in
-            do {
-                let imageData = try Data(contentsOf: URL)
-                let image = UIImage(data: imageData)
-                return image
-            } catch {
-                print("unable to decode image from url")
-                return nil
+            completion(image)
+        }
+    }
+    
+    
+    func decodeXMLInfo(completion: (ComicBookDataModel) -> Void) {
+        guard let filesinArchive = provider.listOfFilePaths() else { return }
+        
+        if let xmlDocument = filesinArchive.filter({ $0.contains(".xml") }).first {
+            provider.extractDataAtPath(filePath: xmlDocument) { data in
+                guard let data = data else { return }
+                guard let decodedModel: ComicBookDataModel = XMLDecoderHelper.decodeXML(data: data) else { return }
+                completion(decodedModel)
             }
         }
     }
+    
 
 }

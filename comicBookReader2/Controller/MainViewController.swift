@@ -7,10 +7,10 @@
 
 import UIKit
 
-class MainViewController: UIPageViewController, UIPageViewControllerDataSource {
+class MainViewController: UIPageViewController {
     
     let comicBookDocument = ComicBookDocument()
-    var comicBookViewControllers: [UIViewController]?
+    var comicBookViewControllers: [ComicBookPageController]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,27 +18,25 @@ class MainViewController: UIPageViewController, UIPageViewControllerDataSource {
         setupViewControllers()
         setupPageViewController()
         setupNavBar()
+        self.delegate = self
     }
     
     // MARK: - Setup Methods
     
     func setupViewControllers() {
-//        comicBookViewControllers = comicBookDocument.comicBookInfo?.pages.compactMap { page in
-//            guard let image = comicBookDocument.imageAtIndex(index: page.imageNumber) else { return nil }
-//            let pageViewController = createPage(image: image)
-//            return pageViewController
-//        }
-        
-        comicBookViewControllers = comicBookDocument.getImages()?.compactMap { image in
-            let pageViewController = createPage(image: image)
-            return pageViewController
+        comicBookViewControllers = (0...comicBookDocument.numberOfPages).map { numberOfPage in
+            return ComicBookPageController()
         }
-
     }
     
     func setupPageViewController() {
         if let firstViewController = comicBookViewControllers?.first {
             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
+            
+            comicBookDocument.imageAtPage(index: 0) { image in
+                guard let image = image else { return }
+                firstViewController.populateWithImage(width: image)
+            }
         }
     }
     
@@ -48,57 +46,76 @@ class MainViewController: UIPageViewController, UIPageViewControllerDataSource {
         navigationItem.rightBarButtonItem = infoButton
     }
     
-    // MARK: - UiPageViewConroller Delegate Methods
+}
+
+// MARK: - PageViewConroller DataSource Methods
+
+extension MainViewController: UIPageViewControllerDataSource {
     
+    // View Controller for previous page
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
-        guard let comicBookViewControllers = comicBookViewControllers, let viewControllerIndex = comicBookViewControllers.firstIndex(of: viewController) else {
+        guard let comicBookViewControllers = comicBookViewControllers, let viewControllerIndex = comicBookViewControllers.firstIndex(of: viewController as! ComicBookPageController) else {
             return nil
         }
         
         let previousIndex = viewControllerIndex - 1
         guard previousIndex >= 0, comicBookViewControllers.count > previousIndex else { return nil }
-        return comicBookViewControllers[previousIndex]
+        let previousViewController = comicBookViewControllers[previousIndex]
+        
+        comicBookDocument.imageAtPage(index: previousIndex) { image in
+            if let image = image {
+                previousViewController.populateWithImage(width: image)
+            }
+        }
+        
+        return previousViewController
     }
     
+    // View Controller for next page
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         
-        guard let comicBookViewControllers = comicBookViewControllers, let viewControllerIndex = comicBookViewControllers.firstIndex(of: viewController) else { return nil
+        guard let comicBookViewControllers = comicBookViewControllers, let viewControllerIndex = comicBookViewControllers.firstIndex(of: viewController as! ComicBookPageController) else { return nil
         }
         
         let nextIndex = viewControllerIndex + 1
         guard comicBookViewControllers.count != nextIndex, comicBookViewControllers.count > nextIndex else { return nil }
-        return comicBookViewControllers[nextIndex]
+        let nextViewController = comicBookViewControllers[nextIndex]
+        
+        comicBookDocument.imageAtPage(index: nextIndex) { image in
+            if let image = image {
+                nextViewController.populateWithImage(width: image)
+            }
+        }
+        return nextViewController
     }
-    
+
 }
 
-// MARK: - ViewController Extension Functions
+
+
+// MARK: - PageViewController Delegate Methods
+
+extension MainViewController: UIPageViewControllerDelegate {
+    
+    // deallocate images from previous pages
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        if let previousViewController = previousViewControllers.last {
+            deallocateCurrentImage(at: previousViewController)
+        }
+    }
+}
+
+
+// MARK: - Controller Extensions
 
 extension MainViewController {
     
-    func createPage(image: UIImage) -> UIViewController {
-        let pageViewController = UIViewController()
-        let pageImage = UIImageView()
-        
-        pageImage.image = image
-        pageImage.contentMode = .scaleAspectFill
-        pageImage.clipsToBounds = true
-        
-        pageViewController.view.addSubview(pageImage)
-        pageImage.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            pageImage.topAnchor.constraint(equalTo: pageViewController.view.topAnchor),
-            pageImage.leadingAnchor.constraint(equalTo: pageViewController.view.leadingAnchor),
-            pageImage.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor),
-            pageImage.trailingAnchor.constraint(equalTo: pageViewController.view.trailingAnchor)
-        ])
-        
-        return pageViewController
+    func deallocateCurrentImage(at viewController: UIViewController) {
+        DispatchQueue.main.async {
+            let currentViewController = viewController as! ComicBookPageController
+            currentViewController.comicImageView.image = nil
+        }
+
     }
-    
 }
-
-
-

@@ -8,6 +8,7 @@ target 'comicBookReader2' do
   # Pods for comicBookReader2
 
 pod "UnrarKit"
-
+pod "ZIPFoundation"
+pod "XMLParsing"
 
 end

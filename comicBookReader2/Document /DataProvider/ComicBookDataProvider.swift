@@ -96,10 +96,21 @@ extension ComicBookDataProvider {
         
         do {
             // extracting image from the path and storing it in memory as Data
-            let _ = try archiveManager.extract(file, bufferSize: .max, skipCRC32: false, progress: nil) { Data in
-                print(Data)
-                completion(Data)
-            }
+//            let _ = try archiveManager.extract(file, bufferSize: .max, skipCRC32: false, progress: nil) { Data in
+//                print(Data)
+//                completion(Data)
+//            }
+            
+            // extracting file to temp directory
+            // converting to Data in memory
+            // deleting file from temp directory
+            let tempdirectory = URL(fileURLWithPath:  NSTemporaryDirectory(), isDirectory: true)
+            let targetURL = tempdirectory.appendingPathComponent("\(file.path)")
+            let _ = try archiveManager.extract(file, to: targetURL)
+            let data = try Data(contentsOf: targetURL)
+            completion(data)
+            try FileManager.default.removeItem(at: targetURL)
+            
         } catch {
             print("unable to extract file")
             completion(nil)

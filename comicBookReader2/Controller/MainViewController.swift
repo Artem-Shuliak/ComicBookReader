@@ -42,8 +42,15 @@ class MainViewController: UIPageViewController {
     
     func setupNavBar() {
         title = comicBookDocument.title
-        let infoButton = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: nil)
+        let infoButton = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(activateInfoController))
         navigationItem.rightBarButtonItem = infoButton
+    }
+    
+    @objc func activateInfoController() {
+        let ComicBookInfoTableViewController = ComicBookInfoTableViewController()
+        guard let data = comicBookDocument.infoDictionary else { return }
+        ComicBookInfoTableViewController.populateWithData(data: data)
+        navigationController?.present(ComicBookInfoTableViewController, animated: true, completion: nil)
     }
     
 }

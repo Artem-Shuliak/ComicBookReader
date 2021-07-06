@@ -40,6 +40,10 @@ class ComicBookDocument {
         return filteredPaths
     }
     
+    var infoDictionary: [String: Any]? {
+        return comicBookInfo?.dictionary
+    }
+    
     // extracts an imag for index of a page
     func imageAtPage(index: Int, completion: (UIImage?) -> Void) {
         guard let page = filteredPages?[index] else {

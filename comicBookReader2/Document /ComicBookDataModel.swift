@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ComicBookDataModel: Decodable {
+struct ComicBookDataModel: Codable {
     let series: String?
     let summary: String?
     let publisher: String?
@@ -37,17 +37,15 @@ extension ComicBookDataModel {
         return dateFormatterPrint.string(from: someDateTime)
     }
     
-//    func getValues() -> [String: Any] {
-//        let dict: [String: Any] = [
-//            "series": series,
-//            "summary": summary,
-//            "publisher": publisher,
-//            "Genre": Genre,
-//            "pageCount": pageCount,
-//            "year": year,
-//            "month": month,
-//            "day": day,
-//        ]
-//
-//    }
 }
+
+
+extension Encodable {
+    
+  var dictionary: [String: Any]? {
+    guard let data = try? JSONEncoder().encode(self) else { return nil }
+    return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
+    
+  }
+}
+

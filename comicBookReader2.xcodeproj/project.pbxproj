@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		376A9756269359C700DB3D46 /* XMLDecoderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A9755269359C700DB3D46 /* XMLDecoderHelper.swift */; };
+		376A97A2269429BD00DB3D46 /* ComicBookInfoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A97A1269429BD00DB3D46 /* ComicBookInfoTableViewController.swift */; };
 		37B3DE8A26930CBB0051A7B6 /* ComicBookPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B3DE8926930CBB0051A7B6 /* ComicBookPageController.swift */; };
 		E6341FBE268EE05400F588A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6341FBD268EE05400F588A2 /* AppDelegate.swift */; };
 		E6341FC0268EE05400F588A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6341FBF268EE05400F588A2 /* SceneDelegate.swift */; };
@@ -24,6 +25,7 @@
 /* Begin PBXFileReference section */
 		33FE39B74B8FAD004E6F4E73 /* Pods-comicBookReader2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-comicBookReader2.release.xcconfig"; path = "Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2.release.xcconfig"; sourceTree = "<group>"; };
 		376A9755269359C700DB3D46 /* XMLDecoderHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLDecoderHelper.swift; sourceTree = "<group>"; };
+		376A97A1269429BD00DB3D46 /* ComicBookInfoTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicBookInfoTableViewController.swift; sourceTree = "<group>"; };
 		37B3DE8926930CBB0051A7B6 /* ComicBookPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicBookPageController.swift; sourceTree = "<group>"; };
 		4D19C9F84411760F4C038CEB /* Pods_comicBookReader2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_comicBookReader2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2B4922D015F6B370E12ABD3 /* Pods-comicBookReader2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-comicBookReader2.debug.xcconfig"; path = "Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2.debug.xcconfig"; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 			children = (
 				E6341FC1268EE05400F588A2 /* MainViewController.swift */,
 				37B3DE8926930CBB0051A7B6 /* ComicBookPageController.swift */,
+				376A97A1269429BD00DB3D46 /* ComicBookInfoTableViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 				376A9756269359C700DB3D46 /* XMLDecoderHelper.swift in Sources */,
 				E682A89C268F19CA0027B560 /* ComicBookDataProvider.swift in Sources */,
 				E682A89E268F32D20027B560 /* DataProviderProtocol .swift in Sources */,
+				376A97A2269429BD00DB3D46 /* ComicBookInfoTableViewController.swift in Sources */,
 				E682A897268F101B0027B560 /* ComicBookDataModel.swift in Sources */,
 				E6341FBE268EE05400F588A2 /* AppDelegate.swift in Sources */,
 				E6341FD2268EE19400F588A2 /* ComicBookDocument.swift in Sources */,

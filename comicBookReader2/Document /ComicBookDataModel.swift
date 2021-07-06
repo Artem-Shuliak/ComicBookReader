@@ -8,21 +8,21 @@
 import Foundation
 
 struct ComicBookDataModel: Codable {
-    let series: String?
-    let summary: String?
-    let publisher: String?
+    let Series: String?
+    let Summary: String?
+    let Publisher: String?
     let Genre: String?
-    let pageCount: Int?
-    let year: Int?
-    let month: Int?
-    let day: Int?
+    let PageCount: Int?
+    let Year: Int?
+    let Month: Int?
+    let Day: Int?
 }
 
 extension ComicBookDataModel {
     
     var date: String? {
         
-        guard let day = day, let month = month, let year = year else { return nil }
+        guard let day = Day, let month = Month, let year = Year else { return nil }
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -36,9 +36,8 @@ extension ComicBookDataModel {
         
         return dateFormatterPrint.string(from: someDateTime)
     }
-    
-}
 
+}
 
 extension Encodable {
     

@@ -18,7 +18,7 @@ class ComicBookDataProvider {
     
     // archive reference in app document storage location
     private var archiveFile: URL? {
-        return getDocumentDirectory?.appendingPathComponent("The Amazing Spider-Man - Amazing Grace (2016) (Digital) (F) (Zone-Empire).cbr")
+        return getDocumentDirectory?.appendingPathComponent("Thor - Latverian Prometheus (2010) (Digital) (F) (Kileko-Empire).cbz")
     }
     
     // Archive Managers
@@ -36,6 +36,7 @@ class ComicBookDataProvider {
 
 extension ComicBookDataProvider: DataProviderProtocol {
     
+    // Returns list with all files as Paths in the Archive
     func listOfFilePaths() -> [String]? {
         let fileExtension = archiveFile?.pathExtension.lowercased()
         
@@ -50,7 +51,8 @@ extension ComicBookDataProvider: DataProviderProtocol {
         }
     }
     
-    
+    // Extracts file at specified path in the archive
+    // Returns it as Data
     func extractDataAtPath(filePath: String, completion: (Data?) -> Void) {
         let fileExtension = archiveFile?.pathExtension.lowercased()
         

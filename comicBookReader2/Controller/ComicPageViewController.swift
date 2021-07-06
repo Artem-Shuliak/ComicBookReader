@@ -7,18 +7,35 @@
 
 import UIKit
 
-class MainViewController: UIPageViewController {
+protocol ComicPageViewCotrollerDelegate: AnyObject {
+    func getIndex(index: Int)
+}
+
+class ComicPageViewController: UIPageViewController {
     
-    let comicBookDocument = ComicBookDocument()
+    
+    // MARK: - Properties
+    
+    var comicBookDocument: ComicBookDocument
     var comicBookViewControllers: [ComicBookPageController]?
+    weak var ComicPageViewCotrollerDelegate: ComicPageViewCotrollerDelegate?
+    
+    
+    // MARK: - Lifecycle Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataSource = self
         setupViewControllers()
         setupPageViewController()
-        setupNavBar()
-        self.delegate = self
+    }
+    
+    init(comicBookDocument: ComicBookDocument) {
+        self.comicBookDocument = comicBookDocument
+        super.init(transitionStyle: .pageCurl, navigationOrientation: .horizontal, options: .none)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
     }
     
     // MARK: - Setup Methods
@@ -30,6 +47,9 @@ class MainViewController: UIPageViewController {
     }
     
     func setupPageViewController() {
+        dataSource = self
+        delegate = self
+        
         if let firstViewController = comicBookViewControllers?.first {
             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
             
@@ -39,25 +59,11 @@ class MainViewController: UIPageViewController {
             }
         }
     }
-    
-    func setupNavBar() {
-        title = comicBookDocument.title
-        let infoButton = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(activateInfoController))
-        navigationItem.rightBarButtonItem = infoButton
-    }
-    
-    @objc func activateInfoController() {
-        let ComicBookInfoTableViewController = ComicBookInfoTableViewController()
-        guard let data = comicBookDocument.infoDictionary else { return }
-        ComicBookInfoTableViewController.populateWithData(data: data)
-        navigationController?.present(ComicBookInfoTableViewController, animated: true, completion: nil)
-    }
-    
 }
 
 // MARK: - PageViewConroller DataSource Methods
 
-extension MainViewController: UIPageViewControllerDataSource {
+extension ComicPageViewController: UIPageViewControllerDataSource {
     
     // View Controller for previous page
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
@@ -69,6 +75,8 @@ extension MainViewController: UIPageViewControllerDataSource {
         let previousIndex = viewControllerIndex - 1
         guard previousIndex >= 0, comicBookViewControllers.count > previousIndex else { return nil }
         let previousViewController = comicBookViewControllers[previousIndex]
+        
+        ComicPageViewCotrollerDelegate?.getIndex(index: previousIndex)
         
         comicBookDocument.imageAtPage(index: previousIndex) { image in
             if let image = image {
@@ -89,6 +97,8 @@ extension MainViewController: UIPageViewControllerDataSource {
         guard comicBookViewControllers.count != nextIndex, comicBookViewControllers.count > nextIndex else { return nil }
         let nextViewController = comicBookViewControllers[nextIndex]
         
+        ComicPageViewCotrollerDelegate?.getIndex(index: nextIndex)
+        
         comicBookDocument.imageAtPage(index: nextIndex) { image in
             if let image = image {
                 nextViewController.populateWithImage(width: image)
@@ -96,14 +106,13 @@ extension MainViewController: UIPageViewControllerDataSource {
         }
         return nextViewController
     }
-
+    
 }
-
 
 
 // MARK: - PageViewController Delegate Methods
 
-extension MainViewController: UIPageViewControllerDelegate {
+extension ComicPageViewController: UIPageViewControllerDelegate {
     
     // deallocate images from previous pages
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
@@ -116,13 +125,28 @@ extension MainViewController: UIPageViewControllerDelegate {
 
 // MARK: - Controller Extensions
 
-extension MainViewController {
+extension ComicPageViewController {
     
+    // Deallocate Image from the PreviousViewController to free up memory
     func deallocateCurrentImage(at viewController: UIViewController) {
         DispatchQueue.main.async {
             let currentViewController = viewController as! ComicBookPageController
             currentViewController.comicImageView.image = nil
         }
-
+        
+    }
+    
+    // move PageViewController to next page
+    func moveToNextPage() {
+        guard let currentViewController = self.viewControllers?.first else { return print("Failed to get current view controller") }
+        guard let nextViewController = self.dataSource?.pageViewController( self, viewControllerAfter: currentViewController) else { return }
+        setViewControllers([nextViewController], direction: .forward, animated: true, completion: nil)
+    }
+    
+    // move PageViewController to previous page
+    func moveToPreviousPage() {
+        guard let currentViewController = self.viewControllers?.first else { return print("Failed to get current view controller") }
+        guard let previousViewController = self.dataSource?.pageViewController(self, viewControllerBefore: currentViewController) else { return }
+        setViewControllers([previousViewController], direction: .reverse, animated: true, completion: nil)
     }
 }

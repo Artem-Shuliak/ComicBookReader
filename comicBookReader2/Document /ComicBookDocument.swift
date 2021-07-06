@@ -11,16 +11,19 @@ class ComicBookDocument {
     
     // model for the data of a book extracted by dataProvider
     let provider = ComicBookDataProvider()
+    // Comic Book Info Model
     var comicBookInfo: ComicBookDataModel?
     
     init() {
+        // Decodes XML from the Archive
+        // Instantiates comicBookInfo Model from it
         decodeXMLInfo { model in
             comicBookInfo = model
         }
     }
     
     var title: String? {
-        return comicBookInfo?.series
+        return comicBookInfo?.Series
     }
     
     var date: String? {
@@ -34,12 +37,14 @@ class ComicBookDocument {
         return filteredPaths?.count ?? 0
     }
     
+    // filtered files of the archive, containing only pages with images
     var filteredPages: [String]? {
         let pages = provider.listOfFilePaths()
         let filteredPaths = pages?.filter { $0.contains(".jpg")}
         return filteredPaths
     }
     
+    // returns ComicBookInfo as Dictionary
     var infoDictionary: [String: Any]? {
         return comicBookInfo?.dictionary
     }
@@ -68,7 +73,7 @@ class ComicBookDocument {
         }
     }
     
-    
+    // Function to Decode XML from the Archive XML file
     func decodeXMLInfo(completion: (ComicBookDataModel) -> Void) {
         guard let filesinArchive = provider.listOfFilePaths() else { return }
         

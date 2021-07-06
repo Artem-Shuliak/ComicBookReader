@@ -16,16 +16,20 @@ class ComicBookDataProvider {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
     }
     
+    var archiveName: String
+    
     // archive reference in app document storage location
     private var archiveFile: URL? {
-        return getDocumentDirectory?.appendingPathComponent("Thor - Latverian Prometheus (2010) (Digital) (F) (Kileko-Empire).cbz")
+        return getDocumentDirectory?.appendingPathComponent(archiveName)
     }
+    
     
     // Archive Managers
     private var cbzArchiveManager: Archive?
     private var cbrArchiveManager: URKArchive?
     
-    init() {
+    init(archiveName: String) {
+        self.archiveName = archiveName
         guard let archiveFile = archiveFile else { return }
         
         cbzArchiveManager = Archive(url: archiveFile, accessMode: .read)
@@ -98,21 +102,14 @@ extension ComicBookDataProvider {
         
         do {
             // extracting image from the path and storing it in memory as Data
-//            let _ = try archiveManager.extract(file, bufferSize: .max, skipCRC32: false, progress: nil) { Data in
-//                print(Data)
-//                completion(Data)
-//            }
+            let mutableData = NSMutableData()
+            let _ = try archiveManager.extract(file, bufferSize: .max, skipCRC32: false, progress: nil) { Data in
+                mutableData.append(Data)
+            }
             
-            // extracting file to temp directory
-            // converting to Data in memory
-            // deleting file from temp directory
-            let tempdirectory = URL(fileURLWithPath:  NSTemporaryDirectory(), isDirectory: true)
-            let targetURL = tempdirectory.appendingPathComponent("\(file.path)")
-            let _ = try archiveManager.extract(file, to: targetURL)
-            let data = try Data(contentsOf: targetURL)
-            completion(data)
-            try FileManager.default.removeItem(at: targetURL)
-            
+            guard mutableData.length == file.uncompressedSize else { return }
+            completion(Data(mutableData))
+        
         } catch {
             print("unable to extract file")
             completion(nil)

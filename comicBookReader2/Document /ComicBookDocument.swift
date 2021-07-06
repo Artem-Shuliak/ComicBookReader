@@ -8,18 +8,23 @@
 import UIKit
 
 class ComicBookDocument {
-    
+    var archiveName: String
     // model for the data of a book extracted by dataProvider
-    let provider = ComicBookDataProvider()
+    lazy var provider = ComicBookDataProvider(archiveName: archiveName)
     // Comic Book Info Model
     var comicBookInfo: ComicBookDataModel?
     
-    init() {
+    init(archiveName: String) {
+        self.archiveName = archiveName
         // Decodes XML from the Archive
         // Instantiates comicBookInfo Model from it
         decodeXMLInfo { model in
             comicBookInfo = model
         }
+    }
+    
+    func setArchive(name: String) {
+        provider.archiveName = name
     }
     
     var title: String? {

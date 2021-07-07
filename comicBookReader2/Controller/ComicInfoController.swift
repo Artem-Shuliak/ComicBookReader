@@ -7,15 +7,15 @@
 
 import UIKit
 
-class ComicBookInfoTableViewController: UITableViewController {
+class ComicInfoController: UITableViewController {
 
-    // MARK: - Properties
+    // MARK: - Private Properties
     
     // Info Dictionary
-    var info: [String: Any]?
+    private var info: [String: Any]?
     
     // Array of Info Dictionary Keys
-    var indices: [String]? {
+    private var indices: [String]? {
         guard let info = info else { return nil }
         return info.keys.sorted()
     }

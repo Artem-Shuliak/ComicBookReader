@@ -7,9 +7,11 @@
 
 import UIKit
 
-class IntroViewController: UIViewController {
+class IntroController: UIViewController {
+    
+    // MARK: - UI Elements
 
-    let stackView: UIStackView = {
+    private let stackView: UIStackView = {
         let st = UIStackView()
         st.distribution = .fillEqually
         st.axis = .vertical
@@ -19,7 +21,7 @@ class IntroViewController: UIViewController {
         return st
     }()
     
-    let cbzButton: UIButton = {
+    private let cbzButton: UIButton = {
         let btn = UIButton()
         btn.setTitle("CBZ Archive", for: .normal)
         btn.translatesAutoresizingMaskIntoConstraints = false
@@ -29,7 +31,7 @@ class IntroViewController: UIViewController {
         return btn
     }()
     
-    let cbrButton: UIButton = {
+    private let cbrButton: UIButton = {
         let btn = UIButton()
         btn.setTitle("CBR Archive", for: .normal)
         btn.translatesAutoresizingMaskIntoConstraints = false
@@ -40,13 +42,15 @@ class IntroViewController: UIViewController {
     }()
 
     
+    // MARK: - LifeCycle Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         constrainViews()
     }
     
-    func setupViews() {
+    private func setupViews() {
         view.backgroundColor = .systemBackground
         
         view.addSubview(stackView)
@@ -54,7 +58,7 @@ class IntroViewController: UIViewController {
         stackView.addArrangedSubview(cbrButton)
     }
     
-    func constrainViews() {
+    private func constrainViews() {
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -70,18 +74,35 @@ class IntroViewController: UIViewController {
         
     }
     
+    // MARK: - Method Extensions
+    
     @objc func cbzButtonClicked() {
         let archiveName = "The Amazing Spider-Man - The Great Newspaper Strip 01 (1980) (webrip by Lusiphur-DCP).cbz"
-        instantiateComicBookViewer(from: archiveName)
+        guard let comic = ComicBookDocument(archiveName: archiveName) else { return }
+        if comic.state == .ready {
+            presentComicBookViewer(for: comic)
+        }
+        else {
+            // throw error
+            fatalError("document state is not ready")
+        }
     }
     
     @objc func cbrButtonClicked() {
         let archiveName = "Winter Soldier - Second Chances (2019) (Digital) (Zone-Empire).cbr"
-        instantiateComicBookViewer(from: archiveName)
+        
+        guard let comic = ComicBookDocument(archiveName: archiveName) else { return }
+        if comic.state == .ready {
+            presentComicBookViewer(for: comic)
+        }
+        else {
+            // throw error
+            fatalError("document state is not ready")
+        }
     }
     
-    func instantiateComicBookViewer(from archive: String) {
-        let comicBookViewer = ContainerViewController(archiveName: archive)
+    private func presentComicBookViewer(for comic: ComicBookDocument) {
+        let comicBookViewer = ContainerController(comic: comic)
         navigationController?.pushViewController(comicBookViewer, animated: true)
     }
 }

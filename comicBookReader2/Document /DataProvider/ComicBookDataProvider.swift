@@ -11,27 +11,22 @@ import ZIPFoundation
 
 class ComicBookDataProvider {
     
-    // Default Document Directory of an App
-    private var getDocumentDirectory: URL? {
-        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-    }
-    
-    var archiveName: String
-    
     // archive reference in app document storage location
-    private var archiveFile: URL? {
-        return getDocumentDirectory?.appendingPathComponent(archiveName)
-    }
-    
+    private var archiveFile: URL
     
     // Archive Managers
     private var cbzArchiveManager: Archive?
     private var cbrArchiveManager: URKArchive?
     
-    init(archiveName: String) {
-        self.archiveName = archiveName
-        guard let archiveFile = archiveFile else { return }
+    init?(archiveName: String) {
         
+        // get url of ComicFile in documents
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        self.archiveFile = documentDirectory.appendingPathComponent(archiveName)
+        
+        // Initialize Archives
         cbzArchiveManager = Archive(url: archiveFile, accessMode: .read)
         cbrArchiveManager = try? URKArchive(url: archiveFile)
     }
@@ -42,7 +37,7 @@ extension ComicBookDataProvider: DataProviderProtocol {
     
     // Returns list with all files as Paths in the Archive
     func listOfFilePaths() -> [String]? {
-        let fileExtension = archiveFile?.pathExtension.lowercased()
+        let fileExtension = archiveFile.pathExtension.lowercased()
         
         switch fileExtension {
         case "cbz":
@@ -58,7 +53,7 @@ extension ComicBookDataProvider: DataProviderProtocol {
     // Extracts file at specified path in the archive
     // Returns it as Data
     func extractDataAtPath(filePath: String, completion: (Data?) -> Void) {
-        let fileExtension = archiveFile?.pathExtension.lowercased()
+        let fileExtension = archiveFile.pathExtension.lowercased()
         
         switch fileExtension {
         case "cbz":

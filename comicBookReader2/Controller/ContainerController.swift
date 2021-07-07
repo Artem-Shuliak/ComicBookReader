@@ -7,33 +7,29 @@
 
 import UIKit
 
-class ContainerViewController: UIViewController {
+class ContainerController: UIViewController {
 
     // MARK: - Properties
-    
-    let archiveName: String
-    
-    lazy var document = ComicBookDocument(archiveName: archiveName)
-    var comicPageViewController: ComicPageViewController?
-    let bottomNavView = BottomNavView()
+        
+    private var document: ComicBookDocument
+    private var comicPageViewController: ComicViewerController?
+    private let bottomNavView = BottomNavView()
     
     private var isNavHidden: Bool = false
-    
     
     // MARK: - LifeCycle Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        comicPageViewController = ComicPageViewController(comicBookDocument: document)
-        
         setupViews()
         constrainViews()
         setupNavBar()
         setupTapGestureRecognizer()
     }
     
-    init(archiveName: String) {
-        self.archiveName = archiveName
+    init(comic: ComicBookDocument) {
+        self.document = comic
+        self.comicPageViewController = ComicViewerController(comicBookDocument: comic)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,15 +39,19 @@ class ContainerViewController: UIViewController {
     
     // MARK: - Setup Methods
     
-    func setupViews() {
+    private func setupViews() {
+        
         guard let comicPageViewController = comicPageViewController else { return }
         comicPageViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        comicPageViewController.ComicPageViewCotrollerDelegate = self
+        comicPageViewController.ComicViewerControllerDelegate = self
         
+        // add comicPageViewController as subview
         view.addSubview(comicPageViewController.view)
         self.addChild(comicPageViewController)
         comicPageViewController.didMove(toParent: self)
         
+        
+        // add bottomNavView as subview
         view.addSubview(bottomNavView)
         bottomNavView.BottomNavViewDelegate = self
         bottomNavView.translatesAutoresizingMaskIntoConstraints = false
@@ -59,7 +59,7 @@ class ContainerViewController: UIViewController {
         view.backgroundColor = .secondarySystemBackground
     }
     
-    func constrainViews() {
+    private func constrainViews() {
     
         guard let comicPageViewController = comicPageViewController else { return }
         // constrain ComicPageViewController
@@ -75,19 +75,18 @@ class ContainerViewController: UIViewController {
             bottomNavView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             bottomNavView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             bottomNavView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
-            
             bottomNavView.heightAnchor.constraint(equalToConstant: 100),
         ])
 
     }
     
-    func setupNavBar() {
+    private func setupNavBar() {
         title = document.title
         let infoButton = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(activateInfoController))
         navigationItem.rightBarButtonItem = infoButton
     }
         
-    func setupTapGestureRecognizer() {
+    private func setupTapGestureRecognizer() {
         let tapGestureRecognier = UITapGestureRecognizer(target: self, action: #selector(didTapOnPage(_:)))
         guard let comicPageViewController = comicPageViewController else { return }
         comicPageViewController.view.addGestureRecognizer(tapGestureRecognier)
@@ -98,11 +97,11 @@ class ContainerViewController: UIViewController {
 
 // MARK: - Extension Methods
 
-extension ContainerViewController {
+extension ContainerController {
     
     @objc func activateInfoController() {
         guard let data = document.infoDictionary else { return }
-        let ComicBookInfoTableViewController = ComicBookInfoTableViewController(data: data)
+        let ComicBookInfoTableViewController = ComicInfoController(data: data)
         navigationController?.present(ComicBookInfoTableViewController, animated: true, completion: nil)
     }
     
@@ -121,7 +120,7 @@ extension ContainerViewController {
 // MARK: -  Delegate Methods
 
 // Delegate Methods from ComicPageViewController
-extension ContainerViewController: ComicPageViewCotrollerDelegate {
+extension ContainerController: ComicViewerControllerDelegate {
     
     // Gets Index from ComicPageViewController
     // sets CurrentPageLabel of bottomNavView from Index
@@ -132,7 +131,7 @@ extension ContainerViewController: ComicPageViewCotrollerDelegate {
 }
 
 // Delegate Methods from BottomNavView
-extension ContainerViewController: BottomNavViewDelegate {
+extension ContainerController: BottomNavViewDelegate {
     
     // Delegates comicPageViewController to move to next page
     func forwardButtonTapped() {

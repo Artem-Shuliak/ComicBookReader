@@ -8,23 +8,26 @@
 import UIKit
 
 class ComicBookDocument {
-    var archiveName: String
-    // model for the data of a book extracted by dataProvider
-    lazy var provider = ComicBookDataProvider(archiveName: archiveName)
-    // Comic Book Info Model
-    var comicBookInfo: ComicBookDataModel?
     
-    init(archiveName: String) {
-        self.archiveName = archiveName
-        // Decodes XML from the Archive
-        // Instantiates comicBookInfo Model from it
-        decodeXMLInfo { model in
-            comicBookInfo = model
-        }
+    // MARK: - Private Properties
+    
+    enum State {
+        case notLoaded
+        case ready
     }
+
+    // model for the data of a book extracted by dataProvider
+    private var provider: ComicBookDataProvider
+    private var comicBookInfo: ComicBookDataModel?
     
-    func setArchive(name: String) {
-        provider.archiveName = name
+    private(set) var pages: [ComicBookPage]?
+    
+    // MARK: - Public Properties
+    var state: State
+    
+    // returns ComicBookInfo as Dictionary
+    var infoDictionary: [String: Any]? {
+        return comicBookInfo?.dictionary
     }
     
     var title: String? {
@@ -34,51 +37,68 @@ class ComicBookDocument {
     var date: String? {
         return comicBookInfo?.date
     }
+
+    // MARK: - Init Methods
     
-    
-    var numberOfPages: Int {
-        let paths = provider.listOfFilePaths()
-        let filteredPaths = paths?.filter { $0.contains(".jpg")}
-        return filteredPaths?.count ?? 0
+    init?(archiveName: String) {
+        guard let provider = ComicBookDataProvider(archiveName: archiveName) else { return nil }
+        self.provider = provider
+        
+        self.state = .notLoaded
+        self.pages = createPages()
+        self.state = .ready
     }
     
-    // filtered files of the archive, containing only pages with images
-    var filteredPages: [String]? {
-        let pages = provider.listOfFilePaths()
-        let filteredPaths = pages?.filter { $0.contains(".jpg")}
-        return filteredPaths
+    // MARK: - Private Methods
+    
+    private func createPages() -> [ComicBookPage]? {
+        return provider.listOfFilePaths()?
+            .filter {
+                $0.contains(".jpg")
+            }.map { path in
+                return ComicBookPage(archiveName: path, document: self)
+            }
     }
     
-    // returns ComicBookInfo as Dictionary
-    var infoDictionary: [String: Any]? {
-        return comicBookInfo?.dictionary
-    }
+    private let opertionQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.name = "com.comicBook.image.queue"
+        queue.maxConcurrentOperationCount = 3
+        queue.qualityOfService = .userInteractive
+        return queue
+    }()
+    
+    // MARK: - Public Methods
     
     // extracts an imag for index of a page
-    func imageAtPage(index: Int, completion: (UIImage?) -> Void) {
-        guard let page = filteredPages?[index] else {
-            completion(nil)
-            print("unable to get page")
-            return
-        }
-            
-        provider.extractDataAtPath(filePath: page) { data in
-            guard let data = data else {
-                print("unable to get data")
-                completion(nil)
-                return
-            }
-            
-            guard let image = UIImage(data: data) else {
-                print("unable to create Image from data")
-                return
-            }
+    func retrieveImageOperation(at page: ComicBookPage, completion: @escaping (UIImage) -> Void) -> Operation {
         
-            completion(image)
+         let operation = BlockOperation { [weak self] in
+            self?.provider.extractDataAtPath(filePath: page.dataProviderToken) { data in
+                
+                guard let data = data else {
+                    print("unable to get data")
+                    return
+                }
+                
+                guard let image = UIImage(data: data) else {
+                    print("unable to create Image from data")
+                    return
+                }
+                completion(image)
+            }
         }
+        opertionQueue.addOperation(operation)
+        return operation
     }
+
+}
+
+
+extension ComicBookDocument {
     
     // Function to Decode XML from the Archive XML file
+    /*
     func decodeXMLInfo(completion: (ComicBookDataModel) -> Void) {
         guard let filesinArchive = provider.listOfFilePaths() else { return }
         
@@ -90,6 +110,6 @@ class ComicBookDocument {
             }
         }
     }
-    
+    */
 
 }

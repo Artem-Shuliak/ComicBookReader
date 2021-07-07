@@ -41,9 +41,9 @@ class ComicPageController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.page.loadImage { image in
+        self.page.loadImage { [weak self] image in
             DispatchQueue.main.async {
-                self.comicImageView.image = image
+                self?.comicImageView.image = image
             }
         }
     }
@@ -74,9 +74,4 @@ class ComicPageController: UIViewController {
         ])
     }
     
-    // MARK: - Public Method
-    
-    func populateWithImage(width image: UIImage) {
-        self.comicImageView.image = image
-    }
 }

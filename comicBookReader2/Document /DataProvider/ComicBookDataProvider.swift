@@ -15,20 +15,21 @@ class ComicBookDataProvider {
     private var archiveFile: URL
     
     // Archive Managers
-    private var cbzArchiveManager: Archive?
-    private var cbrArchiveManager: URKArchive?
+    private var cbzArchiveManager: Archive
+    private var cbrArchiveManager: URKArchive
     
     init?(archiveName: String) {
-        
         // get url of ComicFile in documents
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            return nil
-        }
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
         self.archiveFile = documentDirectory.appendingPathComponent(archiveName)
         
         // Initialize Archives
-        cbzArchiveManager = Archive(url: archiveFile, accessMode: .read)
-        cbrArchiveManager = try? URKArchive(url: archiveFile)
+        guard let cbzArchiveManager = Archive(url: archiveFile, accessMode: .read) else { return nil }
+        guard let cbrArchiveManager = try? URKArchive(url: archiveFile) else { return nil }
+        
+        // assign Archives to properties
+        self.cbzArchiveManager = cbzArchiveManager
+        self.cbrArchiveManager = cbrArchiveManager
     }
     
 }
@@ -78,18 +79,12 @@ extension ComicBookDataProvider: DataProviderProtocol {
 extension ComicBookDataProvider {
     
     func listofCbzFiles() -> [String]? {
-        guard let archiveManager = cbzArchiveManager else { return nil }
-        return archiveManager.map { $0.path }
+        return cbzArchiveManager.map { $0.path }
     }
     
     func extractCbzFile(filePath: String, completion: (Data?) -> Void) {
-        guard let archiveManager = cbzArchiveManager else {
-            completion(nil)
-            print("unable to instantiate archiveManager")
-            return
-        }
         
-        guard let file = archiveManager[filePath] else {
+        guard let file = cbzArchiveManager[filePath] else {
             completion(nil)
             print("unable to locate file")
             return
@@ -98,7 +93,7 @@ extension ComicBookDataProvider {
         do {
             // extracting image from the path and storing it in memory as Data
             let mutableData = NSMutableData()
-            let _ = try archiveManager.extract(file, bufferSize: .max, skipCRC32: false, progress: nil) { Data in
+            let _ = try cbzArchiveManager.extract(file, bufferSize: .max, skipCRC32: false, progress: nil) { Data in
                 mutableData.append(Data)
             }
             
@@ -113,13 +108,11 @@ extension ComicBookDataProvider {
     
     
     func listofCbrFiles() -> [String]? {
-        guard let manager = cbrArchiveManager else { return nil }
-        return try? manager.listFilenames()
+        return try? cbrArchiveManager.listFilenames()
     }
     
     func extractCbrFile(filePath: String) -> Data? {
-        guard let manager = cbrArchiveManager else { return nil }
-        return try? manager.extractData(fromFile: filePath)
+        return try? cbrArchiveManager.extractData(fromFile: filePath)
     }
     
 }

@@ -10,11 +10,15 @@ import UIKit
 class ContainerController: UIViewController {
 
     // MARK: - Properties
-        
+    
+    // Document
     private var document: ComicBookDocument
-    private var comicPageViewController: ComicViewerController?
+    
+    // Views/Controllers
+    private var comicViewerController: ComicViewerController
     private let bottomNavView = BottomNavView()
     
+    // determines if navigation is hidden when user taps on screen
     private var isNavHidden: Bool = false
     
     // MARK: - LifeCycle Methods
@@ -29,7 +33,7 @@ class ContainerController: UIViewController {
     
     init(comic: ComicBookDocument) {
         self.document = comic
-        self.comicPageViewController = ComicViewerController(comicBookDocument: comic)
+        self.comicViewerController = ComicViewerController(comicBookDocument: comic)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -41,14 +45,13 @@ class ContainerController: UIViewController {
     
     private func setupViews() {
         
-        guard let comicPageViewController = comicPageViewController else { return }
-        comicPageViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        comicPageViewController.ComicViewerControllerDelegate = self
+        comicViewerController.view.translatesAutoresizingMaskIntoConstraints = false
+        comicViewerController.comicViewerControllerDelegate = self
         
         // add comicPageViewController as subview
-        view.addSubview(comicPageViewController.view)
-        self.addChild(comicPageViewController)
-        comicPageViewController.didMove(toParent: self)
+        view.addSubview(comicViewerController.view)
+        self.addChild(comicViewerController)
+        comicViewerController.didMove(toParent: self)
         
         
         // add bottomNavView as subview
@@ -60,14 +63,13 @@ class ContainerController: UIViewController {
     }
     
     private func constrainViews() {
-    
-        guard let comicPageViewController = comicPageViewController else { return }
+        
         // constrain ComicPageViewController
         NSLayoutConstraint.activate([
-            comicPageViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            comicPageViewController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            comicPageViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            comicPageViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+            comicViewerController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            comicViewerController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            comicViewerController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            comicViewerController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         ])
         
         // constrain bottomNavView
@@ -88,8 +90,7 @@ class ContainerController: UIViewController {
         
     private func setupTapGestureRecognizer() {
         let tapGestureRecognier = UITapGestureRecognizer(target: self, action: #selector(didTapOnPage(_:)))
-        guard let comicPageViewController = comicPageViewController else { return }
-        comicPageViewController.view.addGestureRecognizer(tapGestureRecognier)
+        comicViewerController.view.addGestureRecognizer(tapGestureRecognier)
     }
     
 }
@@ -135,12 +136,12 @@ extension ContainerController: BottomNavViewDelegate {
     
     // Delegates comicPageViewController to move to next page
     func forwardButtonTapped() {
-        comicPageViewController?.moveToNextPage()
+        comicViewerController.moveToNextPage()
     }
     
     // Delegates comicPageViewController to move to previous page
     func backwardButtonTapped() {
-        comicPageViewController?.moveToPreviousPage()
+        comicViewerController.moveToPreviousPage()
     }
     
     

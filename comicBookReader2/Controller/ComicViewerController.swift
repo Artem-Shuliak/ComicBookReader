@@ -19,7 +19,7 @@ class ComicViewerController: UIPageViewController {
     private var comicPageControllers: [ComicPageController]?
     
     // MARK: - Public Properties
-    weak var ComicViewerControllerDelegate: ComicViewerControllerDelegate?
+    weak var comicViewerControllerDelegate: ComicViewerControllerDelegate?
     
     // MARK: - Lifecycle Methods
     
@@ -40,12 +40,14 @@ class ComicViewerController: UIPageViewController {
     
     // MARK: - Setup Methods
     
+    // creates ViewControllers from Pages
     private func setupViewControllers() {
         self.comicPageControllers = comicBookDocument.pages?.map{ page in
             return ComicPageController(with: page)
         }
     }
     
+    // Sets up structures of PageViewController
     func setupPageViewController() {
         dataSource = self
         
@@ -72,8 +74,7 @@ class ComicViewerController: UIPageViewController {
             guard previousIndex >= 0, comicBookViewControllers.count > previousIndex else { return nil }
             let previousViewController = comicBookViewControllers[previousIndex]
             
-            self.ComicViewerControllerDelegate?.getIndex(index: previousIndex)
-            
+            self.comicViewerControllerDelegate?.getIndex(index: previousIndex)
             return previousViewController
         }
         
@@ -87,8 +88,7 @@ class ComicViewerController: UIPageViewController {
             guard comicBookViewControllers.count != nextIndex, comicBookViewControllers.count > nextIndex else { return nil }
             let nextViewController = comicBookViewControllers[nextIndex]
             
-            self.ComicViewerControllerDelegate?.getIndex(index: nextIndex)
-            
+            self.comicViewerControllerDelegate?.getIndex(index: nextIndex)
             return nextViewController
         }
         

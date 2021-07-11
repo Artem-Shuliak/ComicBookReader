@@ -1,0 +1,21 @@
+_extends: readdle_default
+excluded:
+  - Pods
+disabled_rules:
+  - opening_brace
+  - type_body_length
+  - file_length
+  - no_fallthrough_only
+opt_in_rules:
+  - computed_accessors_order
+  - file_types_order
+  - modifier_order
+  - protocol_property_accessors_order
+  - type_contents_order
+identifier_name:
+  min_length: 3
+  max_length: 60
+  excluded:
+    - id
+statement_position:
+  statement_mode: uncuddled_else

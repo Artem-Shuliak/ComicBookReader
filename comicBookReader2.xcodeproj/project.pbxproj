@@ -36,6 +36,7 @@
 		376A97AA2695839300DB3D46 /* ComicBookPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicBookPage.swift; sourceTree = "<group>"; };
 		37B3DE8926930CBB0051A7B6 /* ComicPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicPageController.swift; sourceTree = "<group>"; };
 		4D19C9F84411760F4C038CEB /* Pods_comicBookReader2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_comicBookReader2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C62575A269B8719005039D4 /* rdswiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = rdswiftlint.yml; sourceTree = "<group>"; };
 		A2B4922D015F6B370E12ABD3 /* Pods-comicBookReader2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-comicBookReader2.debug.xcconfig"; path = "Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2.debug.xcconfig"; sourceTree = "<group>"; };
 		E6341FBA268EE05400F588A2 /* comicBookReader2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = comicBookReader2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6341FBD268EE05400F588A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -125,6 +126,7 @@
 				E6341FC6268EE05400F588A2 /* Assets.xcassets */,
 				E6341FC8268EE05400F588A2 /* LaunchScreen.storyboard */,
 				E6341FCB268EE05400F588A2 /* Info.plist */,
+				7C62575A269B8719005039D4 /* rdswiftlint.yml */,
 			);
 			path = comicBookReader2;
 			sourceTree = "<group>";
@@ -172,6 +174,7 @@
 				E6341FB6268EE05400F588A2 /* Sources */,
 				E6341FB7268EE05400F588A2 /* Frameworks */,
 				E6341FB8268EE05400F588A2 /* Resources */,
+				7C625759269B8687005039D4 /* RDLint */,
 				49671CEACBF540A9440536AA /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -244,6 +247,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-comicBookReader2/Pods-comicBookReader2-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		7C625759269B8687005039D4 /* RDLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = RDLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh \"$SRCROOT/RunScripts/rdlint.sh\"\n";
 		};
 		AB88BE1C9E071E88B9209CE0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
